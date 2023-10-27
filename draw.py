@@ -3,7 +3,7 @@ import numpy as np
 
 
 
-def draw_cd(pval, avg_rank, barwidth=0.75,linew=2,deltasep=1.0,deltasame=0.2,lineoffs=0.3,cuffmult=0.25,labels_inside=True,label_size=20,link_cuffs=0.2,textmult=0.4,lowerx=0.8,gridx=0.2):
+def draw_cd(pval, avg_rank, barwidth=0.75,linew=2,deltasep=1.0,deltasame=0.2,lineoffs=0.3,cuffmult=0.25,labels_inside=True,label_size=20,link_cuffs=0.2,textmult=0.4,lowerx=0.8,gridx=0.2,additional_text=None):
     """expects a list of comparisons (algo1,algo2,pval,significant), and a dictionary for the average ranks
     barwidth: width of the bars
     linew: width of the lines
@@ -17,6 +17,7 @@ def draw_cd(pval, avg_rank, barwidth=0.75,linew=2,deltasep=1.0,deltasame=0.2,lin
     textmult: how far away is the text, only matters if labels_inside
     lowerx: start of the x axis
     gridx: draw vertical lines at the integer ranks, boolean or alpha value
+    additional_text: add these texts to each name. Either None, String or dictionary
 
     """
     algos=list(avg_rank.keys())
@@ -26,6 +27,11 @@ def draw_cd(pval, avg_rank, barwidth=0.75,linew=2,deltasep=1.0,deltasame=0.2,lin
     #sort both
     ranks, algos = zip(*sorted(zip(ranks, algos),reverse=True))
     #horizontal bar plot
+
+    if additional_text is None:
+        additional_text={algo:"" for algo in algos}
+    if type(additional_text)==str:
+        additional_text={algo:additional_text for algo in algos}
 
     alg_to_ypos = {alg: ypos for ypos, alg in enumerate(algos)}
     #alg_to_upper = {alg: ypos + barwidth / 2 for alg, ypos in alg_to_ypos.items()}
@@ -175,7 +181,7 @@ def draw_cd(pval, avg_rank, barwidth=0.75,linew=2,deltasep=1.0,deltasame=0.2,lin
     if labels_inside:
         plt.tick_params(labelleft=False)
         for alg in algos:
-            plt.text(alg_to_x[alg]-textmult*lineoffs,alg_to_center[alg],alg,ha="right",va="center",fontsize=label_size)
+            plt.text(alg_to_x[alg]-textmult*lineoffs,alg_to_center[alg],alg+additional_text[alg],ha="right",va="center",fontsize=label_size)
 
     else:
         yticks=[(alg_to_upper[algo]+alg_to_lower[algo])/2 for algo in algos]
@@ -184,6 +190,4 @@ def draw_cd(pval, avg_rank, barwidth=0.75,linew=2,deltasep=1.0,deltasame=0.2,lin
 
 
     plt.xlim(left=lowerx)
-
-
 
