@@ -21,6 +21,8 @@ def draw_cd(pval, avg_rank, barwidth=0.75,linew=2,deltasep=1.0,deltasame=0.2,lin
     """
     algos=list(avg_rank.keys())
     ranks=[avg_rank[algo] for algo in algos]
+    flipper=int(np.ceil(np.max(ranks)))+1
+    ranks=[flipper-rank for rank in ranks]   
     #sort both
     ranks, algos = zip(*sorted(zip(ranks, algos),reverse=True))
     #horizontal bar plot
@@ -51,12 +53,14 @@ def draw_cd(pval, avg_rank, barwidth=0.75,linew=2,deltasep=1.0,deltasame=0.2,lin
         return False
 
     seperators=[]
-    for i in range(1,len(algos)-1):
+    for i in range(1,len(algos)):
         value=i-0.5
         if is_contained(value,value,basepos):continue
         #plt.axhline(y=value, color='black', linewidth=linew,linestyle='--')
         seperators.append(value)
     seperators=np.array(seperators)
+    #print(seperators)
+    #exit()
 
     alg_to_group={}
     for alg,ypos in alg_to_ypos.items():
@@ -102,8 +106,8 @@ def draw_cd(pval, avg_rank, barwidth=0.75,linew=2,deltasep=1.0,deltasame=0.2,lin
     heis=np.array([alg_to_upper[algo]-alg_to_lower[algo] for algo in algos])
 
     xmax=max(ranks)
-    xt=[i for i in range(1,int(xmax)+1) if i<=xmax]
-    plt.xticks(xt,xt)
+    xt=[i for i in range(1,int(np.ceil(xmax))+1)]# if i<=xmax]
+    plt.xticks(xt,[flipper-zw for zw in xt])
     if gridx:
         for xx in xt:
             plt.axvline(x=xx, color='black', linewidth=1,linestyle='--',alpha=gridx,zorder=1)
@@ -180,8 +184,6 @@ def draw_cd(pval, avg_rank, barwidth=0.75,linew=2,deltasep=1.0,deltasame=0.2,lin
 
 
     plt.xlim(left=lowerx)
-
-
 
 
 
